@@ -1,0 +1,838 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Hoffman-Imperial Secret Santa</title>
+<meta name="description" content="Hoffman-Imperial Construction Co. has a Secret Santa work order for you. Home Tools Edition, 2026.">
+<meta property="og:title" content="🎅🔨 You've got a Secret Santa work order!">
+<meta property="og:description" content="Hoffman-Imperial Construction Co. · Home Tools Edition 2026. Open only your own link — no peeking!">
+<meta name="theme-color" content="#0b1a33">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Architects+Daughter&family=Bungee&family=Nunito:wght@400;600;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --yellow:#FFC72C; --yellow-d:#e0a800; --red:#D62828; --red-d:#a51c1c;
+  --green:#2f9e57; --bp:#1f5aa6; --bp-d:#174684; --night:#0b1a33; --night-2:#1d3a66;
+  --snow:#f6f9ff; --ink:#14223a; --muted:#5b6b85; --glow:#ffd98a; --card:#fffdf6;
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{
+  background:radial-gradient(120% 80% at 50% 0%, var(--night-2) 0%, var(--night) 60%) fixed, var(--night);
+  color:var(--ink); font-family:"Nunito",system-ui,-apple-system,sans-serif; min-height:100vh;
+  -webkit-font-smoothing:antialiased; overflow-x:hidden;
+}
+#snow{position:fixed;inset:0;pointer-events:none;z-index:0}
+#confetti{position:fixed;inset:0;pointer-events:none;z-index:50}
+main{position:relative;z-index:1;max-width:480px;margin:0 auto;padding:16px 16px 48px}
+.screen{display:none}
+.screen.on{display:block;animation:fadeUp .5s ease both}
+@keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+
+/* ---------- shared pieces ---------- */
+.hazard{height:12px;border-radius:6px;background:repeating-linear-gradient(-45deg,var(--yellow) 0 14px,#1b1b1b 14px 28px)}
+.brand{text-align:center;color:var(--snow);margin:14px 0 10px}
+.brand .co{font-family:"Bungee",sans-serif;font-size:clamp(17px,5.4vw,24px);line-height:1.15;letter-spacing:.5px;color:var(--yellow);text-shadow:0 3px 0 #7a5600}
+.brand .sub{font-family:"Architects Daughter",cursive;font-size:17px;opacity:.9;margin-top:4px}
+.card{background:var(--card);border-radius:18px;padding:18px;margin:14px 0;box-shadow:0 10px 30px rgba(0,0,0,.35);position:relative;overflow:hidden}
+.card.tape{padding-top:26px}
+.card.tape::before{content:"";position:absolute;left:0;right:0;top:0;height:10px;background:repeating-linear-gradient(-45deg,var(--yellow) 0 12px,#1b1b1b 12px 24px)}
+.card h2{font-family:"Bungee",sans-serif;font-size:18px;margin:0 0 8px;color:var(--bp-d);letter-spacing:.3px}
+.card p{margin:6px 0;line-height:1.45}
+.muted{color:var(--muted);font-size:14px}
+.btn{appearance:none;border:0;cursor:pointer;font:inherit;font-weight:800;border-radius:14px;padding:14px 18px;font-size:17px;
+  display:inline-flex;align-items:center;justify-content:center;gap:8px;transition:transform .12s ease, box-shadow .12s ease;-webkit-tap-highlight-color:transparent}
+.btn:active{transform:translateY(2px) scale(.98)}
+.btn-big{width:100%;font-family:"Bungee",sans-serif;font-weight:400;font-size:21px;padding:18px;background:var(--yellow);color:#1b1b1b;box-shadow:0 6px 0 var(--yellow-d),0 12px 24px rgba(0,0,0,.35)}
+.btn-big:active{box-shadow:0 2px 0 var(--yellow-d)}
+.btn-red{background:var(--red);color:#fff;box-shadow:0 4px 0 var(--red-d)}
+.btn-blue{background:var(--bp);color:#fff;box-shadow:0 4px 0 var(--bp-d)}
+.btn-ghost{background:transparent;color:var(--snow);border:2px dashed rgba(255,255,255,.45)}
+.btn-sm{padding:10px 12px;font-size:15px;border-radius:12px}
+.row{display:flex;gap:8px;flex-wrap:wrap}
+.row > .btn{flex:1}
+.toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%) translateY(120px);background:#1b1b1b;color:#fff;padding:12px 18px;border-radius:999px;font-weight:800;z-index:60;transition:transform .3s cubic-bezier(.2,1.4,.4,1);box-shadow:0 8px 24px rgba(0,0,0,.4);max-width:90vw;text-align:center}
+.toast.on{transform:translateX(-50%) translateY(0)}
+
+/* ---------- organizer ---------- */
+.crew{display:grid;grid-template-columns:1fr;gap:8px;margin-top:10px}
+.house{border:2px dashed #d7cfb8;border-radius:12px;padding:8px 12px;display:flex;justify-content:space-between;align-items:center;gap:8px}
+.house b{font-weight:800}
+.house span{font-size:13px;color:var(--muted);white-space:nowrap}
+.kids-hero{display:flex;justify-content:center;gap:10px;margin:-4px 0 4px}
+.kids-hero svg{width:92px;height:auto;filter:drop-shadow(0 6px 8px rgba(0,0,0,.35))}
+.kids-hero .k1{animation:wave 2.4s ease-in-out infinite}
+.kids-hero .k2{animation:wave 2.4s ease-in-out .3s infinite}
+@keyframes wave{0%,100%{transform:rotate(-3deg) translateY(0)}50%{transform:rotate(3deg) translateY(-6px)}}
+.drawing .kids-hero svg{animation:shakeit .25s linear infinite}
+@keyframes shakeit{0%,100%{transform:translateX(0) rotate(0)}25%{transform:translateX(-4px) rotate(-4deg)}75%{transform:translateX(4px) rotate(4deg)}}
+.orders{display:grid;gap:10px;margin-top:10px}
+.order{border-radius:14px;background:#fff;border:2px solid #e9e1c9;padding:12px;display:grid;gap:8px;animation:popIn .45s cubic-bezier(.2,1.5,.4,1) both}
+.order .hd{display:flex;align-items:center;justify-content:space-between}
+.order .num{font-family:"Bungee",sans-serif;font-size:12px;color:var(--muted)}
+.order .who{font-family:"Bungee",sans-serif;font-size:19px;color:var(--ink)}
+.order.sent{border-color:var(--green)}
+.order.sent .num::after{content:" · sent ✓";color:var(--green)}
+@keyframes popIn{from{opacity:0;transform:scale(.8) rotate(-2deg)}to{opacity:1;transform:none}}
+.warn{background:#fff3cd;border-left:6px solid var(--yellow);border-radius:10px;padding:10px 12px;font-size:14px;line-height:1.4;margin-top:10px}
+
+/* ---------- gate / invalid ---------- */
+.gate{text-align:center}
+.gate .big{font-family:"Bungee",sans-serif;font-size:clamp(28px,9vw,40px);color:var(--red);line-height:1.05;margin:6px 0}
+.gate .q{font-size:20px;font-weight:800;margin:6px 0 16px}
+.peek{margin-top:12px}
+.nope-msg{display:none;margin-top:12px;font-weight:800;color:var(--red)}
+
+/* ---------- reveal stage (units: cqw = 1% of stage width) ---------- */
+.stage-wrap{container-type:inline-size;margin:4px auto 0;max-width:440px}
+.stage{position:relative;width:100%;aspect-ratio:5/7;border-radius:20px;overflow:hidden;box-shadow:0 14px 40px rgba(0,0,0,.5);cursor:pointer;
+  background:var(--night);-webkit-tap-highlight-color:transparent}
+.stage > *{position:absolute}
+.scene{inset:0;width:100%;height:100%}
+.tw{animation:twinkle 1.6s ease-in-out infinite}
+.tw:nth-child(3n){animation-delay:.5s}.tw:nth-child(3n+1){animation-delay:1s}
+@keyframes twinkle{0%,100%{opacity:1}50%{opacity:.35}}
+.skip-hint{left:0;right:0;bottom:2.4cqw;text-align:center;font-size:3.2cqw;color:#6c7fa0;font-weight:800;letter-spacing:.3px;z-index:9}
+
+.cable{left:49.7cqw;top:12cqw;width:.6cqw;height:8cqw;background:#3a3f48;transform-origin:top;z-index:3}
+.cable::after{content:"";position:absolute;left:50%;bottom:-3.2cqw;width:4cqw;height:4cqw;transform:translateX(-50%);border:1.1cqw solid #8c96a3;border-top-color:transparent;border-radius:50%}
+.box{left:36cqw;top:20cqw;width:28cqw;height:22.4cqw;z-index:4;transform-origin:50% 100%}
+.box svg{width:100%;height:100%;overflow:visible}
+.box .lid{transform-box:view-box;transform-origin:10px 32px}
+.box .bow{transform-box:view-box;transform-origin:50px 20px}
+.tool{left:44cqw;top:94cqw;width:12cqw;height:12cqw;z-index:6;opacity:0}
+.tool svg{width:100%;height:100%}
+.kid{top:79cqw;width:26cqw;height:34cqw;z-index:5}
+.kid > div,.kid > div > div,.kid > div > div > div{width:100%;height:100%}
+.kid svg{width:100%;height:100%;overflow:visible}
+.kid.c{left:6cqw}
+.kid.e{left:68cqw}
+.kid .arm{transform-box:view-box;transform-origin:72px 70px}
+.burst{left:38cqw;top:66cqw;width:24cqw;z-index:7;opacity:0;font-family:"Bungee",sans-serif;font-size:5cqw;color:#1b1b1b;text-align:center}
+.burst span{display:inline-block;background:var(--yellow);padding:1.4cqw 2.2cqw;border-radius:2cqw;transform:rotate(-8deg);box-shadow:0 0 0 .8cqw #fff, 0 1cqw 2cqw rgba(0,0,0,.4)}
+.bubble{top:66cqw;z-index:7;opacity:0;background:#fff;color:var(--ink);font-family:"Architects Daughter",cursive;font-weight:700;font-size:4.4cqw;padding:1.2cqw 2.4cqw;border-radius:4cqw;white-space:nowrap}
+.bubble::after{content:"";position:absolute;bottom:-1.6cqw;left:30%;border:1.8cqw solid transparent;border-top-color:#fff;border-bottom:0}
+.bubble.b1{left:5cqw}.bubble.b2{left:70cqw}
+.bp{left:5cqw;right:5cqw;top:5cqw;height:64cqw;z-index:8;
+  background:
+    linear-gradient(rgba(255,255,255,.09) 1px,transparent 1px) 0 0/4cqw 4cqw,
+    linear-gradient(90deg,rgba(255,255,255,.09) 1px,transparent 1px) 0 0/4cqw 4cqw,
+    linear-gradient(rgba(255,255,255,.18) 1px,transparent 1px) 0 0/20cqw 20cqw,
+    linear-gradient(90deg,rgba(255,255,255,.18) 1px,transparent 1px) 0 0/20cqw 20cqw,
+    var(--bp);
+  border-radius:1.5cqw;box-shadow:0 2cqw 5cqw rgba(0,0,0,.5);color:#fff;text-align:center;
+  clip-path:inset(0 0 100% 0)}
+.bp-inner{position:absolute;inset:2.4cqw;border:.5cqw dashed rgba(255,255,255,.55);border-radius:1cqw;padding:2cqw 3cqw 9cqw;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1.4cqw}
+.bp .meta{font-family:"Architects Daughter",cursive;font-size:2.8cqw;opacity:.85;letter-spacing:.2px}
+.bp .title{font-family:"Bungee",sans-serif;font-size:4.9cqw;min-height:6.4cqw;letter-spacing:.2px;white-space:nowrap}
+.bp .title .caret{display:inline-block;width:.6cqw;height:5cqw;background:#fff;margin-left:.6cqw;vertical-align:-.6cqw;animation:blink .6s steps(1) infinite}
+@keyframes blink{50%{opacity:0}}
+.bp .lead{font-family:"Architects Daughter",cursive;font-size:4.2cqw;line-height:1.25;opacity:0}
+.bp .name{font-family:"Bungee",sans-serif;color:var(--yellow);line-height:1;text-shadow:0 1cqw 0 rgba(0,0,0,.35);opacity:0}
+.bp .dims{font-family:"Architects Daughter",cursive;font-size:3cqw;opacity:0;display:flex;align-items:center;gap:1.5cqw;width:80%}
+.bp .dims::before,.bp .dims::after{content:"";flex:1;border-top:.4cqw solid rgba(255,255,255,.7)}
+.stamp{right:7cqw;top:57cqw;z-index:9;opacity:0;font-family:"Bungee",sans-serif;color:var(--red);font-size:6cqw;padding:1cqw 3cqw;
+  border:1.1cqw double var(--red);border-radius:2cqw;transform:rotate(-12deg);background:rgba(255,255,255,.08);mix-blend-mode:normal;letter-spacing:.5px;
+  text-shadow:0 0 1px rgba(214,40,40,.5)}
+.roll{left:3.5cqw;right:3.5cqw;top:3.8cqw;height:3.4cqw;border-radius:2cqw;z-index:9;opacity:0;
+  background:linear-gradient(#cfe0f7,#7fa3d6 45%,#3f6db0 55%,#9fbde6)}
+
+/* ---- timeline (only runs while .play is on the stage) ---- */
+.stage.play .scene{animation:fadeIn .5s ease both}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+.kid > div{transform:translateX(-140%)}
+.kid.e > div{transform:translateX(140%)}
+.stage.play .kid.c > div{animation:enterL 1.6s cubic-bezier(.3,.9,.4,1) .4s both}
+.stage.play .kid.e > div{animation:enterR 1.6s cubic-bezier(.3,.9,.4,1) .4s both}
+@keyframes enterL{from{transform:translateX(-140%)}to{transform:none}}
+@keyframes enterR{from{transform:translateX(140%)}to{transform:none}}
+.stage.play .kid .bob{animation:waddle .27s ease-in-out .4s 6 both;transform-origin:50% 100%}
+@keyframes waddle{0%,100%{transform:rotate(0) translateY(0)}25%{transform:rotate(-7deg) translateY(-2cqw)}75%{transform:rotate(7deg) translateY(-2cqw)}}
+.stage.play .kid.c .lean{animation:bonkL .8s ease-in-out 2.2s both;transform-origin:50% 100%}
+.stage.play .kid.e .lean{animation:bonkR .8s ease-in-out 2.2s both;transform-origin:50% 100%}
+@keyframes bonkL{0%{transform:none}42%{transform:translateX(64%) rotate(10deg)}52%{transform:translateX(58%) rotate(-4deg)}100%{transform:none}}
+@keyframes bonkR{0%{transform:none}42%{transform:translateX(-64%) rotate(-10deg)}52%{transform:translateX(-58%) rotate(4deg)}100%{transform:none}}
+.stage.play .burst{animation:pop .7s ease-out 2.5s both}
+@keyframes pop{0%{opacity:0;transform:scale(.2)}30%{opacity:1;transform:scale(1.15)}70%{opacity:1;transform:scale(1)}100%{opacity:0;transform:scale(1.1)}}
+.stage.play .bubble.b1{animation:bub 1.1s ease 2.95s both}
+.stage.play .bubble.b2{animation:bub 1.1s ease 3.1s both}
+@keyframes bub{0%{opacity:0;transform:translateY(2cqw) scale(.6)}20%,80%{opacity:1;transform:none}100%{opacity:0;transform:translateY(-2cqw)}}
+.stage.play .cable{animation:cableDown .8s cubic-bezier(.5,0,.75,1) 3.3s both, cableUp .6s ease-in 4.6s forwards}
+@keyframes cableDown{from{height:8cqw}to{height:78cqw}}
+@keyframes cableUp{from{height:78cqw;opacity:1}to{height:0;opacity:0}}
+.stage.play .box{animation:boxDrop .8s cubic-bezier(.5,0,.75,1) 3.3s both, squash .35s ease-out 4.1s both, rattle .8s linear 4.45s both}
+@keyframes boxDrop{from{transform:translateY(0)}to{transform:translateY(70cqw)}}
+@keyframes squash{0%{transform:translateY(70cqw) scale(1.18,.78)}55%{transform:translateY(70cqw) scale(.92,1.08)}100%{transform:translateY(70cqw) scale(1)}}
+@keyframes rattle{0%,100%{transform:translateY(70cqw) rotate(0)}10%{transform:translateY(70cqw) rotate(-5deg)}20%{transform:translateY(70cqw) rotate(5deg)}30%{transform:translateY(69cqw) rotate(-6deg)}40%{transform:translateY(70cqw) rotate(6deg)}50%{transform:translateY(68cqw) rotate(-7deg)}60%{transform:translateY(70cqw) rotate(7deg)}70%{transform:translateY(69cqw) rotate(-4deg)}80%{transform:translateY(70cqw) rotate(3deg)}}
+.stage.play .box .lid{animation:lidPop .5s cubic-bezier(.2,1.4,.4,1) 5.3s both}
+@keyframes lidPop{from{transform:none}to{transform:translate(-4px,-10px) rotate(-118deg)}}
+.stage.play .box .bow{animation:bowFly .9s ease-out 5.3s both}
+@keyframes bowFly{0%{transform:none;opacity:1}100%{transform:translate(30px,-90px) rotate(260deg);opacity:0}}
+.stage.play .tool{animation:toolFly .85s cubic-bezier(.3,.6,.5,1) both}
+.stage.play .tool.t1{animation-delay:5.35s}.stage.play .tool.t2{animation-delay:5.45s}
+.stage.play .tool.t3{animation-delay:5.5s}.stage.play .tool.t4{animation-delay:5.6s}
+@keyframes toolFly{
+  0%{opacity:0;transform:translate(0,0) scale(.3) rotate(0)}
+  15%{opacity:1}
+  45%{opacity:1;transform:translate(calc(var(--dx)*.55),-34cqw) scale(1) rotate(calc(var(--r)*.6))}
+  100%{opacity:1;transform:translate(var(--dx),var(--dy)) scale(1) rotate(var(--r))}}
+.stage.play .bp{animation:unroll .75s cubic-bezier(.4,0,.2,1) 6.3s both}
+@keyframes unroll{from{clip-path:inset(0 0 100% 0)}to{clip-path:inset(0 0 0 0)}}
+.stage.play .roll{animation:rollDown .75s cubic-bezier(.4,0,.2,1) 6.3s both}
+@keyframes rollDown{0%{opacity:0;transform:translateY(0)}1%{opacity:1;transform:translateY(0)}92%{opacity:1;transform:translateY(62cqw)}100%{opacity:0;transform:translateY(62cqw)}}
+.stage.play .bp .lead{animation:fadeIn .5s ease 8.05s both}
+.stage.play .bp .name{animation:namePop .6s cubic-bezier(.2,1.6,.4,1) 8.35s both}
+@keyframes namePop{from{opacity:0;transform:scale(.3) rotate(-6deg)}to{opacity:1;transform:none}}
+.stage.play .bp .dims{animation:fadeIn .5s ease 8.6s both}
+.stage.play .stamp{animation:stamp .32s cubic-bezier(.6,0,.9,.6) 8.95s both}
+@keyframes stamp{0%{opacity:0;transform:rotate(-12deg) scale(3.2)}100%{opacity:.95;transform:rotate(-12deg) scale(1)}}
+.stage.play{animation:shake .45s linear 9.25s both}
+@keyframes shake{0%,100%{transform:none}20%{transform:translate(-1.4cqw,.8cqw)}40%{transform:translate(1.4cqw,-.8cqw)}60%{transform:translate(-1cqw,.6cqw)}80%{transform:translate(.8cqw,-.4cqw)}}
+/* celebration loops */
+.stage.play .kid .jump.loop{animation:hop .55s ease-in-out 9.3s infinite alternate}
+@keyframes hop{from{transform:translateY(0)}to{transform:translateY(-3.5cqw)}}
+.stage.play .kid.c .arm.loop{animation:hammer .4s ease-in-out 9.3s infinite alternate}
+@keyframes hammer{from{transform:rotate(10deg)}to{transform:rotate(-55deg)}}
+.stage.play .kid.e .arm.loop{animation:clip .55s ease-in-out 9.3s infinite alternate}
+@keyframes clip{from{transform:rotate(0)}to{transform:rotate(-70deg)}}
+
+/* skip: jump every one-shot animation to its final frame; loops start now */
+.stage.skip *:not(.loop):not(.tw),.stage.skip{animation-delay:0s !important;animation-duration:1ms !important}
+.stage.skip .loop{animation-delay:0s !important}
+.stage.skip .skip-hint{display:none}
+.stage.done .skip-hint{display:none}
+
+/* ---------- details ---------- */
+#details{display:none}
+#details.on{display:block;animation:fadeUp .6s ease both}
+.facts{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:6px}
+.fact{background:#fff;border:2px solid #e9e1c9;border-radius:12px;padding:10px;text-align:center}
+.fact .k{font-size:12px;font-weight:800;letter-spacing:.6px;color:var(--muted);text-transform:uppercase}
+.fact .v{font-family:"Bungee",sans-serif;font-size:20px;color:var(--ink);margin-top:2px}
+.code{font-family:"Architects Daughter",cursive;font-size:18px;line-height:1.4;background:var(--bp);color:#fff;border-radius:12px;padding:12px 14px;margin-top:6px;
+  background-image:linear-gradient(rgba(255,255,255,.1) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.1) 1px,transparent 1px);background-size:16px 16px}
+.idea{border:2px dashed #cfc5a6;border-radius:14px;padding:16px;min-height:150px;display:flex;flex-direction:column;gap:6px;margin:10px 0;background:#fff}
+.idea .em{font-size:38px;line-height:1}
+.idea .t{font-family:"Bungee",sans-serif;font-size:17px;color:var(--ink);line-height:1.2}
+.idea .p{line-height:1.45}
+.idea .pr{font-weight:800;color:var(--green);font-size:14px}
+.idea.swap{animation:swapIn .4s cubic-bezier(.2,1.3,.4,1) both}
+@keyframes swapIn{from{opacity:0;transform:rotateX(70deg) translateY(-10px)}to{opacity:1;transform:none}}
+.count{font-size:13px;color:var(--muted);text-align:center;margin-top:6px}
+.shot{text-align:center;color:var(--snow);font-weight:800;margin:16px 0 4px;font-size:15px}
+footer{text-align:center;color:#8ea2c4;font-size:13px;margin-top:22px;font-family:"Architects Daughter",cursive}
+
+@media (prefers-reduced-motion: reduce){
+  .kids-hero svg,.tw{animation:none !important}
+}
+</style>
+</head>
+<body>
+<canvas id="snow" aria-hidden="true"></canvas>
+<canvas id="confetti" aria-hidden="true"></canvas>
+<main>
+  <div class="hazard"></div>
+  <div class="brand">
+    <div class="co">Hoffman-Imperial<br>Construction Co.</div>
+    <div class="sub">Secret Santa · Home Tools Edition · 2026</div>
+  </div>
+
+  <!-- ================= ORGANIZER ================= -->
+  <section id="organizer" class="screen" aria-labelledby="org-h">
+    <div class="kids-hero" id="heroKids"></div>
+    <div class="card tape">
+      <h2 id="org-h">The Foreman's Office</h2>
+      <p>Welcome to the job site! Draw names and you'll get one sealed work order link per crew member. Text each person <b>only their own link</b>.</p>
+      <div class="crew" id="crewList"></div>
+      <p class="muted" style="margin-top:10px">Site rules: nobody draws their own name or their own spouse. Junior Foremen Charlie &amp; Effie supervise from a safe distance.</p>
+    </div>
+
+    <div id="drawArea">
+      <button class="btn btn-big" id="drawBtn">🎲 Draw Names</button>
+      <p class="muted" style="text-align:center;color:#a9b8d3;margin-top:10px">Even the organizer won't see who has whom. Fair and square.</p>
+    </div>
+
+    <div id="ordersArea" hidden>
+      <div class="card tape">
+        <h2>Work Orders Issued 📋</h2>
+        <p class="muted" id="drawnAt"></p>
+        <div class="orders" id="orders"></div>
+        <div class="row" style="margin-top:12px">
+          <button class="btn btn-blue btn-sm" id="copyAll">📋 Copy all as text</button>
+        </div>
+        <div class="warn"><b>Draw once, send once.</b> Redrawing makes a brand-new set of links, and the old ones still work. Mixing them up would put two people on the same job, so only ever send one set. And no opening other people's links, by order of the Foreman. 👷</div>
+      </div>
+      <button class="btn btn-ghost btn-sm" id="redrawBtn" style="width:100%">↻ Start over and redraw</button>
+    </div>
+  </section>
+
+  <!-- ================= GATE ================= -->
+  <section id="gate" class="screen" aria-live="polite">
+    <div class="kids-hero" id="gateKids"></div>
+    <div class="card tape gate">
+      <p class="muted" style="margin:0">Sealed work order · do not open on behalf of others</p>
+      <p style="margin:12px 0 0;font-weight:800">This work order is for</p>
+      <div class="big" id="gateName">—</div>
+      <p class="q" id="gateQ">Are you —?</p>
+      <button class="btn btn-big" id="gateYes">Yep, hard hat on 👷</button>
+      <div class="peek"><button class="btn btn-sm" id="gateNo" style="background:#eee;color:#555">Nope, not me</button></div>
+      <p class="nope-msg" id="nopeMsg"></p>
+    </div>
+  </section>
+
+  <!-- ================= REVEAL ================= -->
+  <section id="reveal" class="screen">
+    <div class="stage-wrap">
+      <div class="stage" id="stage" role="img" aria-label="Animated construction site reveal">
+        <svg class="scene" viewBox="0 0 100 140" preserveAspectRatio="none" aria-hidden="true">
+          <defs>
+            <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#081428"/><stop offset="1" stop-color="#22457a"/></linearGradient>
+            <radialGradient id="moonGlow"><stop offset="0" stop-color="#fff6d5" stop-opacity=".55"/><stop offset="1" stop-color="#fff6d5" stop-opacity="0"/></radialGradient>
+            <radialGradient id="winGlow"><stop offset="0" stop-color="#ffe7a3"/><stop offset="1" stop-color="#ffb84d"/></radialGradient>
+          </defs>
+          <rect width="100" height="140" fill="url(#sky)"/>
+          <circle cx="84" cy="22" r="14" fill="url(#moonGlow)"/>
+          <circle cx="84" cy="22" r="5.5" fill="#fff6d5"/>
+          <circle cx="86" cy="20.5" r="5" fill="#0f2242" opacity=".0"/>
+          <g fill="#fff">
+            <circle class="tw" cx="20" cy="18" r=".5"/><circle class="tw" cx="33" cy="30" r=".4"/><circle class="tw" cx="70" cy="9" r=".5"/>
+            <circle class="tw" cx="94" cy="40" r=".4"/><circle class="tw" cx="58" cy="34" r=".35"/><circle class="tw" cx="44" cy="22" r=".45"/>
+            <circle class="tw" cx="76" cy="44" r=".4"/><circle class="tw" cx="26" cy="46" r=".35"/><circle class="tw" cx="90" cy="6" r=".4"/>
+            <circle class="tw" cx="66" cy="56" r=".35"/><circle class="tw" cx="38" cy="54" r=".3"/><circle class="tw" cx="96" cy="62" r=".35"/>
+          </g>
+          <!-- far hill + house frame -->
+          <path d="M0 104 Q 25 92 52 99 T 100 94 V140 H0 Z" fill="#cfdcf0"/>
+          <g transform="translate(58 72)">
+            <path d="M2 26 L18 12 L34 26" fill="none" stroke="#c98b4f" stroke-width="1.6" stroke-linejoin="round"/>
+            <path d="M18 12 L18 26 M10 19 L10 26 M26 19 L26 26" stroke="#c98b4f" stroke-width=".8"/>
+            <rect x="4" y="26" width="28" height="18" fill="#2a3f63" opacity=".55"/>
+            <path d="M4 26 V44 M11 26 V44 M18 26 V44 M25 26 V44 M32 26 V44 M4 26 H32 M4 44 H32 M4 35 H32" stroke="#c98b4f" stroke-width="1"/>
+            <rect x="20" y="29" width="7" height="6" fill="url(#winGlow)"/>
+            <rect x="7" y="29" width="7" height="6" fill="url(#winGlow)"/>
+            <circle cx="18" cy="19.5" r="2.6" fill="none" stroke="#2f9e57" stroke-width="1.3"/>
+            <circle cx="18" cy="22" r=".7" fill="#D62828"/>
+            <g class="lights">
+              <path d="M2 26 Q 10 29 18 26 Q 26 29 34 26" fill="none" stroke="#1b1b1b" stroke-width=".25"/>
+              <circle class="tw" cx="6" cy="27.4" r=".8" fill="#ff5a5a"/><circle class="tw" cx="10" cy="28.2" r=".8" fill="#ffd34d"/>
+              <circle class="tw" cx="14" cy="27.6" r=".8" fill="#5ad1ff"/><circle class="tw" cx="22" cy="27.6" r=".8" fill="#7dff8a"/>
+              <circle class="tw" cx="26" cy="28.2" r=".8" fill="#ff5a5a"/><circle class="tw" cx="30" cy="27.4" r=".8" fill="#ffd34d"/>
+            </g>
+          </g>
+          <!-- crane -->
+          <g stroke="#FFC72C" stroke-width=".7" fill="none">
+            <path d="M5 112 V9 M10 112 V9"/>
+            <path d="M5 112 L10 104 L5 96 L10 88 L5 80 L10 72 L5 64 L10 56 L5 48 L10 40 L5 32 L10 24 L5 16 L10 9"/>
+            <path d="M1 9 H62 M3 12.5 H62"/>
+            <path d="M10 12.5 L13 9 L16 12.5 L19 9 L22 12.5 L25 9 L28 12.5 L31 9 L34 12.5 L37 9 L40 12.5 L43 9 L46 12.5 L49 9 L52 12.5 L55 9 L58 12.5 L61 9"/>
+            <path d="M7.5 9 L7.5 3 L62 9 M7.5 3 L1 9"/>
+          </g>
+          <rect x="0" y="10" width="5" height="5" fill="#8a94a3"/>
+          <rect x="9.5" y="12.5" width="6" height="5" rx=".6" fill="#FFC72C"/>
+          <rect x="10.6" y="13.4" width="3.6" height="2.4" fill="#bfe6ff"/>
+          <!-- santa hat on crane cab -->
+          <path d="M9.6 12.6 Q 12.5 6.5 16.6 9.5 Q 15 10.5 15.6 12.6 Z" fill="#D62828"/>
+          <rect x="9.2" y="12" width="6.8" height="1.2" rx=".6" fill="#fff"/>
+          <circle cx="16.8" cy="9.4" r="1" fill="#fff"/>
+          <!-- string lights along the jib -->
+          <path d="M14 13 Q 22 18 30 13 Q 38 18 46 13 Q 54 18 61 13" fill="none" stroke="#1b1b1b" stroke-width=".25"/>
+          <g>
+            <circle class="tw" cx="18" cy="15.4" r=".9" fill="#ff5a5a"/><circle class="tw" cx="22" cy="16.2" r=".9" fill="#ffd34d"/>
+            <circle class="tw" cx="26" cy="15.4" r=".9" fill="#7dff8a"/><circle class="tw" cx="34" cy="15.4" r=".9" fill="#5ad1ff"/>
+            <circle class="tw" cx="38" cy="16.2" r=".9" fill="#ff5a5a"/><circle class="tw" cx="42" cy="15.4" r=".9" fill="#ffd34d"/>
+            <circle class="tw" cx="50" cy="15.4" r=".9" fill="#7dff8a"/><circle class="tw" cx="54" cy="16.2" r=".9" fill="#5ad1ff"/>
+            <circle class="tw" cx="58" cy="15.2" r=".9" fill="#ff5a5a"/>
+          </g>
+          <!-- foreground snow -->
+          <path d="M0 113 Q 12 110 25 112.5 T 52 112 T 78 112.5 T 100 111.5 V140 H0 Z" fill="#f4f8ff"/>
+          <path d="M0 122 Q 20 119 40 122 T 80 121 T 100 122 V140 H0 Z" fill="#e6eefb"/>
+          <g fill="#2f9e57"><path d="M93 112 l3 -6 l3 6 z"/><path d="M92.5 109 l3.5 -6 l3.5 6 z"/></g>
+          <circle cx="96" cy="104" r=".7" fill="#ffd34d"/>
+        </svg>
+
+        <div class="cable"></div>
+        <div class="box" id="box"></div>
+
+        <div class="kid c"><div><div class="bob"><div class="lean"><div class="jump loop" id="kidC"></div></div></div></div></div>
+        <div class="kid e"><div><div class="bob"><div class="lean"><div class="jump loop" id="kidE"></div></div></div></div></div>
+
+        <div class="tool t1" style="--dx:-36cqw;--dy:18cqw;--r:-200deg" id="t1"></div>
+        <div class="tool t2" style="--dx:-17cqw;--dy:22cqw;--r:160deg" id="t2"></div>
+        <div class="tool t3" style="--dx:17cqw;--dy:21cqw;--r:-150deg" id="t3"></div>
+        <div class="tool t4" style="--dx:36cqw;--dy:17cqw;--r:220deg" id="t4"></div>
+
+        <div class="burst"><span>BONK!</span></div>
+        <div class="bubble b1">hee hee!</div>
+        <div class="bubble b2">tee hee!</div>
+
+        <div class="bp" id="bp">
+          <div class="bp-inner">
+            <div class="meta" id="bpMeta">WORK ORDER · HOFFMAN-IMPERIAL CONSTRUCTION CO.</div>
+            <div class="title" id="bpTitle"></div>
+            <div class="lead">Permit granted! You're building joy for…</div>
+            <div class="name" id="bpName">—</div>
+            <div class="dims">budget: up to $100</div>
+          </div>
+        </div>
+        <div class="roll"></div>
+        <div class="stamp">APPROVED</div>
+        <div class="skip-hint">tap to skip ⏩</div>
+      </div>
+    </div>
+    <p class="sr-only" id="srResult" style="position:absolute;left:-9999px" aria-live="polite"></p>
+
+    <div id="details">
+      <div class="row" style="margin:14px 0 0">
+        <button class="btn btn-ghost btn-sm" id="replayBtn">↻ Replay</button>
+      </div>
+      <div class="card tape">
+        <h2>Work Order Details</h2>
+        <p id="detailLead"></p>
+        <div class="facts">
+          <div class="fact"><div class="k">Budget</div><div class="v">Up to $100</div></div>
+          <div class="fact"><div class="k">Theme</div><div class="v">Home Tool</div></div>
+        </div>
+        <h2 style="margin-top:16px">Site Inspection Code</h2>
+        <div class="code">No clutter. No single-use gadgets. If it doesn't earn its drawer space, it doesn't pass inspection. ✅</div>
+      </div>
+
+      <div class="card tape">
+        <h2>Spark Some Ideas ✨</h2>
+        <p class="muted" id="sparkLead"></p>
+        <div class="idea" id="idea" aria-live="polite"></div>
+        <button class="btn btn-red" id="nextIdea" style="width:100%">📐 Show me another blueprint</button>
+        <div class="count" id="ideaCount"></div>
+      </div>
+      <p class="shot">📸 Screenshot this! Your link is the only copy of the secret.</p>
+    </div>
+  </section>
+
+  <!-- ================= INVALID ================= -->
+  <section id="invalid" class="screen">
+    <div class="kids-hero" id="badKids"></div>
+    <div class="card tape gate">
+      <div class="big" style="font-size:28px">Uh-oh! 🚧</div>
+      <p class="q">This work order got lost in the drywall.</p>
+      <p>The link looks incomplete or got scrambled. Ask the Foreman (John) to text you a fresh copy, and make sure you copied the <i>whole</i> link.</p>
+    </div>
+  </section>
+
+  <footer>Supervised by Junior Foremen Charlie &amp; Effie · Under budget, over the moon</footer>
+</main>
+<div class="toast" id="toast" role="status"></div>
+
+<script>
+(() => {
+'use strict';
+
+/* ============ DATA ============ */
+const PEOPLE = [
+  { id:0, first:'Nick',     full:'Nick Hoffman',      house:'P', city:'Atlanta' },
+  { id:1, first:'Lisa',     full:'Lisa Hoffman',      house:'P', city:'Atlanta' },
+  { id:2, first:'John',     full:'John Hoffman',      house:'J', city:'Mill Valley' },
+  { id:3, first:'Sydney',   full:'Sydney Hoffman',    house:'J', city:'Mill Valley' },
+  { id:4, first:'Anna',     full:'Anna Imperial',     house:'A', city:'Atlanta' },
+  { id:5, first:'Jonathan', full:'Jonathan Imperial', house:'A', city:'Atlanta' },
+];
+const HOUSES = [
+  { key:'P', label:'Nick & Lisa', where:'Atlanta, GA' },
+  { key:'J', label:'John & Sydney', where:'Mill Valley, CA' },
+  { key:'A', label:'Anna & Jonathan', where:'Atlanta, GA' },
+];
+
+// Gadgets & tools that home blogs rave about. p:true = also fits Nick & Lisa (small footprint / replaces stuff).
+const GADGETS = [
+  { e:'💡', t:'Rechargeable motion-sensor puck lights', p:'Closet, pantry, under the sink: they light up the second the door opens, and no electrician is needed.', $:'~$30', parents:true },
+  { e:'🧲', t:'Magnetic wristband', p:'Screws, nails and drill bits stick to your wrist instead of rolling under the fridge. Weirdly life-changing.', $:'~$15', parents:true },
+  { e:'🪛', t:'Mini cordless electric screwdriver', p:'The pocket-sized, USB-C kind that makes flat-pack furniture almost fun.', $:'~$50' },
+  { e:'📏', t:'Laser level', p:'For the gallery wall that finally goes up straight on the first try.', $:'~$40' },
+  { e:'🐍', t:'Drain snake + enzyme cleaner', p:'Clears a slow shower drain in 30 seconds, with no plumber and no harsh chemicals.', $:'~$20', parents:true },
+  { e:'🖼️', t:'Upgraded picture-hanging kit', p:'Clever hangers that go in without a hammer and leave barely-there holes.', $:'~$25' },
+  { e:'🔌', t:'Smart plugs (4-pack)', p:'Lamps that switch on at sunset and a "did I leave it on?" you can answer from the car.', $:'~$30', parents:true },
+  { e:'🌀', t:'Wall-mounted cordless hand vac', p:'Lives on the wall and is out in three seconds when the Cheerios hit the floor.', $:'~$90' },
+  { e:'🧰', t:'Slim tool rail or pegboard panel', p:'Gives every tool one home on the wall, so the junk drawer can finally retire.', $:'~$45' },
+  { e:'💧', t:'Moisture meter', p:'Is it a stain or a slow leak? Answers in one beep, before it turns into a project.', $:'~$25' },
+  { e:'🧽', t:'Expandable under-sink organizer', p:'Brings order to the cabinet everyone is scared to open.', $:'~$30' },
+  { e:'🪜', t:'Slim folding step stool', p:'Folds to about an inch thick and hides beside the fridge until the top shelf calls.', $:'~$50' },
+  { e:'🏷️', t:'Label maker', p:'Breaker panel, filter sizes, the mystery key ring: labeled once, sorted for good.', $:'~$35', parents:true },
+  { e:'🔦', t:'Rechargeable magnetic work light', p:'Sticks to the furnace, the car hood or the inside of a cabinet. Hands free at last.', $:'~$30', parents:true },
+  { e:'🔧', t:'Heirloom ratcheting multi-bit driver', p:'One beautiful screwdriver with a magnetic wall mount that replaces a drawer of mismatched ones.', $:'~$40', parents:true },
+  { e:'🔋', t:'Rechargeable batteries + smart charger', p:'Remotes, smoke alarms, every noisy toy in the house: never buy AAs again.', $:'~$35', parents:true },
+  { e:'🌡️', t:'Smart temp & humidity sensors', p:'Tiny pucks that text you when the basement, attic or garage gets weird.', $:'~$30', parents:true },
+];
+
+const NEW_HOME = [
+  { e:'🏠', t:'"Meet Your House" walkthrough', p:'A handyman spends an hour finding and labeling every shutoff valve and breaker, then tapes a one-page cheat sheet inside the panel door.', $:'~$100' },
+  { e:'🌬️', t:'A year of HVAC filters, auto-delivered', p:'The right size shows up right on schedule, so the reminder is the gift.', $:'~$80' },
+  { e:'💦', t:'Smart water-leak sensors', p:'Little pucks under the sinks, water heater and washer that ping your phone at the very first drip.', $:'~$60' },
+  { e:'🛠️', t:'Handyman / TaskRabbit hours', p:'Two hours to clear the "we\'ll hang that someday" list: curtain rods, art, the door that squeaks.', $:'~$100' },
+  { e:'🌪️', t:'Dryer-vent cleaning', p:'The first-year chore nobody mentions. Faster drying and a much happier dryer.', $:'~$100' },
+  { e:'🧸', t:'Toddler-proofing install', p:'Anti-tip furniture anchors and cabinet latches put in by someone else, because Charlie and Effie are scaling everything.', $:'~$60' },
+  { e:'🌡️', t:'Smart thermostat', p:'Learns your schedule, trims the bill and gets adjusted from under a warm blanket.', $:'~$100' },
+  { e:'🎨', t:'Accent-wall kickstart', p:'Sample pots, a great brush, painter\'s tape and a coupon for a Saturday of help on the wall they keep talking about.', $:'~$75' },
+  { e:'🔐', t:'Keypad smart lock', p:'No more hiding a key under the mat, plus a code for the dog walker or Grandma.', $:'~$100' },
+];
+
+const CITY = {
+  'Mill Valley': [
+    { e:'🌿', t:'Hillside yard tune-up', p:'An afternoon of pro help on the slope: pruning, cleanup and a drip-irrigation check.', $:'~$100' },
+    { e:'☁️', t:'Rechargeable closet dehumidifiers', p:'Little cordless units that keep foggy Marin mornings out of the coat closet.', $:'~$30' },
+    { e:'✨', t:'Outdoor smart plug for the deck lights', p:'Patio string lights that turn on by themselves for golden hour.', $:'~$25' },
+  ],
+  'Atlanta': [
+    { e:'🌼', t:'Pollen-season pressure wash', p:'A pro rinses the yellow coat off the porch, driveway and windows come spring.', $:'~$100' },
+    { e:'🦟', t:'Mosquito yard treatment', p:'One summer treatment so the backyard works after 6pm again.', $:'~$80' },
+    { e:'💨', t:'Dehumidifier for Georgia summers', p:'Keeps the crawlspace or basement from going swampy in July.', $:'~$100' },
+  ],
+};
+
+const PARENTS = [
+  { e:'📦', t:'Professional organizer session', p:'A couple of hours with a pro who kindly helps decide what stays and what goes.', $:'~$100' },
+  { e:'🚛', t:'Junk-haul / donation pickup', p:'Book the truck. Whatever gets loaded on is gone for good, in the best way.', $:'~$100' },
+  { e:'🎉', t:'"Purge Party" kit', p:'Heavy-duty contractor bags, a donation drop-off plan and an IOU for three hours of hands-on help from the giver.', $:'~$25' },
+  { e:'📸', t:'Photo-box digitizing', p:'Shoeboxes of prints become one searchable folder, and the boxes leave the house.', $:'~$100' },
+  { e:'🔪', t:'Pro knife sharpening', p:'Every dull knife in the block gets a fresh edge. Nothing new comes into the house.', $:'~$40' },
+  { e:'🍂', t:'Gutter cleaning', p:'Somebody else\'s ladder and somebody else\'s afternoon.', $:'~$100' },
+  { e:'🔁', t:'"One in, two out" upgrade', p:'One excellent tool comes in, two tired ones get donated. Net drawer space: +1.', $:'~$50' },
+  { e:'🧹', t:'Garage or closet deep-clean', p:'A pro crew clears, sorts and sweeps the one space that has gotten away from everybody.', $:'~$100' },
+  { e:'🪝', t:'Garage wall rail system', p:'Gets the rakes, ladders and bikes up off the floor and onto the wall.', $:'~$80' },
+];
+
+/* ============ HELPERS ============ */
+const $ = (s, r=document) => r.querySelector(s);
+const rnd = n => { const a = new Uint32Array(1); crypto.getRandomValues(a); return a[0] % n; };
+const shuffle = arr => { const a = arr.slice(); for (let i=a.length-1;i>0;i--){ const j=rnd(i+1); [a[i],a[j]]=[a[j],a[i]]; } return a; };
+const escapeHTML = s => String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const okPair = (g, r) => g !== r && PEOPLE[g].house !== PEOPLE[r].house;
+
+/* ============ DRAW ============ */
+// Prefer one big 6-person loop (no mutual pairs). Fall back to any valid derangement.
+function draw(){
+  const ids = PEOPLE.map(p => p.id);
+  for (let t=0; t<5000; t++){
+    const order = shuffle(ids);
+    if (order.every((g,i) => okPair(g, order[(i+1)%order.length]))){
+      const map = {}; order.forEach((g,i) => map[g] = order[(i+1)%order.length]);
+      return { map, loop:true };
+    }
+  }
+  for (let t=0; t<5000; t++){
+    const perm = shuffle(ids);
+    if (ids.every((g,i) => okPair(g, perm[i]))){
+      const map = {}; ids.forEach((g,i) => map[g] = perm[i]);
+      return { map, loop:false };
+    }
+  }
+  throw new Error('No valid draw found');
+}
+
+/* ============ TOKENS ============ */
+// Not real encryption — just scrambled so nobody can read a link by eye.
+const KEY = new TextEncoder().encode('CharlieAndEffieAreTheForemen2026');
+const b64u = bytes => btoa(String.fromCharCode(...bytes)).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'');
+const unb64u = s => { s = s.replace(/-/g,'+').replace(/_/g,'/'); while (s.length % 4) s += '='; return Uint8Array.from(atob(s), c => c.charCodeAt(0)); };
+function encode(g, r){
+  const body = new TextEncoder().encode(JSON.stringify({ g, r, y:2026 }));
+  const salt = crypto.getRandomValues(new Uint8Array(4));
+  const out = new Uint8Array(4 + body.length); out.set(salt, 0);
+  body.forEach((b,i) => out[4+i] = b ^ KEY[i % KEY.length] ^ salt[i % 4] ^ ((i*31) & 255));
+  return b64u(out);
+}
+function decode(tok){
+  try {
+    const raw = unb64u(tok); if (raw.length < 10) return null;
+    const salt = raw.slice(0,4), body = raw.slice(4);
+    const dec = body.map((b,i) => b ^ KEY[i % KEY.length] ^ salt[i % 4] ^ ((i*31) & 255));
+    const o = JSON.parse(new TextDecoder().decode(dec));
+    if (o.y !== 2026 || !Number.isInteger(o.g) || !Number.isInteger(o.r)) return null;
+    if (!PEOPLE[o.g] || !PEOPLE[o.r] || !okPair(o.g, o.r)) return null;
+    return { g:o.g, r:o.r };
+  } catch { return null; }
+}
+const baseURL = () => location.origin + location.pathname;
+
+/* ============ ART ============ */
+function kidSVG(who){
+  const C = who === 'c';
+  const shirt = C ? '#3b7dd8' : '#e0457b';
+  const hair = C ? '#8a5a2b' : '#6b3e1f';
+  const name = C ? 'CHARLIE' : 'EFFIE';
+  const hairBits = C
+    ? `<path d="M36 33 q5 6 9 0 q5 6 9 0 q5 6 9 0" fill="${hair}"/>`
+    : `<circle cx="26" cy="42" r="6.5" fill="${hair}"/><circle cx="74" cy="42" r="6.5" fill="${hair}"/>
+       <path d="M20 36 l6 4 l-6 4z M32 36 l-6 4 l6 4z" fill="#D62828"/><path d="M68 36 l6 4 l-6 4z M80 36 l-6 4 l6 4z" fill="#D62828"/>
+       <path d="M37 33 q6 5 13 0 q7 5 13 0" fill="${hair}"/>`;
+  const tool = C
+    ? `<g class="arm loop"><rect x="68" y="66" width="10" height="24" rx="5" fill="#f6d2b4"/>
+         <g transform="rotate(30 74 90)"><rect x="72" y="62" width="4.5" height="30" rx="2" fill="#b07a3c"/><rect x="64" y="57" width="21" height="9" rx="2.2" fill="#9aa4b1"/><rect x="64" y="57" width="6" height="9" rx="2" fill="#7c8592"/></g>
+         <circle cx="74" cy="90" r="5.5" fill="#f6d2b4"/></g>`
+    : `<g class="arm loop"><rect x="68" y="66" width="10" height="24" rx="5" fill="#f6d2b4"/>
+         <g transform="rotate(-10 80 88)"><rect x="70" y="72" width="22" height="28" rx="2.5" fill="#c8915a"/><rect x="73" y="77" width="16" height="20" fill="#fff"/>
+         <rect x="77" y="70" width="8" height="4.5" rx="1.2" fill="#9aa4b1"/><path d="M75 81 h12 M75 85 h12 M75 89 h8" stroke="#1f5aa6" stroke-width="1.2"/><path d="M75 93 l2 2 l4 -4" stroke="#2f9e57" stroke-width="1.4" fill="none"/></g>
+         <circle cx="74" cy="90" r="5.5" fill="#f6d2b4"/></g>`;
+  return `<svg viewBox="0 0 100 130" aria-hidden="true">
+    <ellipse cx="50" cy="125" rx="26" ry="4" fill="rgba(0,0,0,.22)"/>
+    <rect x="36" y="96" width="11" height="24" rx="5" fill="#2f4a73"/><rect x="53" y="96" width="11" height="24" rx="5" fill="#2f4a73"/>
+    <ellipse cx="40" cy="121" rx="9" ry="5" fill="#5a3a22"/><ellipse cx="60" cy="121" rx="9" ry="5" fill="#5a3a22"/>
+    <rect x="20" y="67" width="10" height="24" rx="5" fill="#f6d2b4" transform="rotate(14 25 69)"/><circle cx="20" cy="90" r="5.5" fill="#f6d2b4"/>
+    <path d="M27 69 Q50 57 73 69 L75 101 Q50 108 25 101 Z" fill="${shirt}"/>
+    <path d="M29 71 Q40 65 46 66 L48 103 Q38 103 28 100 Z" fill="#ff7a1a"/><path d="M71 71 Q60 65 54 66 L52 103 Q62 103 72 100 Z" fill="#ff7a1a"/>
+    <rect x="28" y="86" width="20" height="3.5" fill="#eef6ff"/><rect x="52" y="86" width="20" height="3.5" fill="#eef6ff"/>
+    <circle cx="50" cy="45" r="22" fill="#f6d2b4"/>
+    <circle cx="28" cy="47" r="4.5" fill="#f0c4a0"/><circle cx="72" cy="47" r="4.5" fill="#f0c4a0"/>
+    ${hairBits}
+    <circle cx="38" cy="53" r="4" fill="#ff8f9b" opacity=".55"/><circle cx="62" cy="53" r="4" fill="#ff8f9b" opacity=".55"/>
+    <ellipse cx="42" cy="46" rx="2.7" ry="3.3" fill="#2b2b2b"/><ellipse cx="58" cy="46" rx="2.7" ry="3.3" fill="#2b2b2b"/>
+    <circle cx="43" cy="45" r=".9" fill="#fff"/><circle cx="59" cy="45" r=".9" fill="#fff"/>
+    <path d="M44 55 Q50 61 56 55" stroke="#7a3b2e" stroke-width="2.2" fill="none" stroke-linecap="round"/>
+    <path d="M26 35 Q26 11 50 11 Q74 11 74 35 Z" fill="#FFC72C" stroke="#d99a00" stroke-width="1.4"/>
+    <rect x="46.5" y="11.5" width="7" height="23" rx="3.5" fill="#ffdc6b"/>
+    <rect x="19" y="32" width="62" height="7" rx="3.5" fill="#f2b400"/>
+    <text x="50" y="29" text-anchor="middle" font-family="Bungee, sans-serif" font-size="${C?6:7}" fill="#7a5600">${name}</text>
+    ${tool}
+  </svg>`;
+}
+const TOOLBOX = `<svg viewBox="0 0 100 80" aria-hidden="true">
+  <rect x="6" y="32" width="88" height="46" rx="5" fill="#D62828"/>
+  <rect x="6" y="32" width="88" height="8" fill="#a51c1c"/>
+  <rect x="44" y="32" width="12" height="46" fill="#2f9e57"/>
+  <rect x="14" y="52" width="10" height="7" rx="1.5" fill="#c9d1db"/><rect x="76" y="52" width="10" height="7" rx="1.5" fill="#c9d1db"/>
+  <text x="50" y="72" text-anchor="middle" font-family="Bungee, sans-serif" font-size="6" fill="#fff" opacity=".85">H·I CO.</text>
+  <g class="lid">
+    <rect x="4" y="22" width="92" height="12" rx="4" fill="#e63b3b"/>
+    <rect x="44" y="22" width="12" height="12" fill="#37b064"/>
+    <path d="M36 22 V14 Q36 9 41 9 H59 Q64 9 64 14 V22" fill="none" stroke="#3a3f48" stroke-width="4"/>
+  </g>
+  <g class="bow">
+    <path d="M50 21 C40 8 30 14 38 21 Z" fill="#37b064"/><path d="M50 21 C60 8 70 14 62 21 Z" fill="#37b064"/>
+    <circle cx="50" cy="20.5" r="3.5" fill="#2f9e57"/>
+  </g>
+</svg>`;
+const TOOLS = [
+  `<svg viewBox="0 0 40 40"><path d="M8 32 L24 16" stroke="#9aa4b1" stroke-width="5" stroke-linecap="round"/><path d="M22 10 a8 8 0 1 0 8 8 l-5 -1 l-2 -2 z" fill="#9aa4b1"/><circle cx="8" cy="32" r="3" fill="#7c8592"/></svg>`,
+  `<svg viewBox="0 0 40 40"><rect x="2" y="15" width="36" height="10" rx="2" fill="#FFC72C" stroke="#d99a00"/><rect x="15" y="17" width="10" height="6" rx="3" fill="#a8f0b0"/><circle cx="20" cy="20" r="1.8" fill="#fff"/></svg>`,
+  `<svg viewBox="0 0 40 40"><rect x="17" y="2" width="6" height="20" rx="3" fill="#b07a3c"/><rect x="15" y="20" width="10" height="5" fill="#c9d1db"/><path d="M14 25 h12 l-1 12 q-5 3 -10 0 z" fill="#D62828"/></svg>`,
+  `<svg viewBox="0 0 40 40"><defs><pattern id="cc" width="6" height="6" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><rect width="3" height="6" fill="#D62828"/><rect x="3" width="3" height="6" fill="#fff"/></pattern></defs><rect x="15" y="2" width="10" height="17" rx="4" fill="url(#cc)" stroke="#a51c1c" stroke-width=".8"/><rect x="18.5" y="19" width="3" height="16" fill="#c9d1db"/><path d="M18.5 35 h3 l-1.5 3 z" fill="#9aa4b1"/></svg>`,
+];
+function heroKids(el){ el.innerHTML = `<div class="k1">${kidSVG('c')}</div><div class="k2">${kidSVG('e')}</div>`; [...el.children].forEach(d => d.firstElementChild.style.width='92px'); }
+
+/* ============ TOAST / CLIPBOARD ============ */
+let toastT;
+function toast(msg){ const t=$('#toast'); t.textContent=msg; t.classList.add('on'); clearTimeout(toastT); toastT=setTimeout(()=>t.classList.remove('on'),2200); }
+async function copy(text){
+  try { await navigator.clipboard.writeText(text); return true; }
+  catch {
+    const ta=document.createElement('textarea'); ta.value=text; ta.style.position='fixed'; ta.style.opacity='0'; document.body.appendChild(ta); ta.select();
+    let ok=false; try{ ok=document.execCommand('copy'); }catch{} ta.remove(); return ok;
+  }
+}
+
+/* ============ ORGANIZER ============ */
+const STORE = 'hi-santa-2026';
+const load = () => { try { return JSON.parse(localStorage.getItem(STORE)); } catch { return null; } };
+const save = v => { try { localStorage.setItem(STORE, JSON.stringify(v)); } catch {} };
+const smsBody = (name, url) => `🎅🔨 Hey ${name}! Hoffman-Imperial Construction Co. has a sealed Secret Santa work order with your name on it. Open YOUR link only (no peeking!): ${url}`;
+
+function renderOrders(data){
+  $('#drawArea').hidden = true; $('#ordersArea').hidden = false;
+  $('#drawnAt').textContent = 'Drawn ' + new Date(data.at).toLocaleString([], { dateStyle:'medium', timeStyle:'short' }) + '. Tap "Text it" to send each one.';
+  const wrap = $('#orders'); wrap.innerHTML = '';
+  data.links.forEach((l, i) => {
+    const p = PEOPLE[l.g];
+    const d = document.createElement('div'); d.className = 'order' + (data.sent?.[l.g] ? ' sent' : ''); d.style.animationDelay = (i*70)+'ms';
+    d.innerHTML = `<div class="hd"><div><div class="num">WORK ORDER #0${i+1}</div><div class="who">${escapeHTML(p.first)}'s link</div></div><div style="font-size:26px">📜</div></div>
+      <div class="row"><button class="btn btn-blue btn-sm" data-act="copy">📋 Copy link</button><a class="btn btn-red btn-sm" data-act="sms" href="sms:?&body=${encodeURIComponent(smsBody(p.first, l.url))}">💬 Text it</a></div>`;
+    const mark = () => { data.sent = data.sent || {}; data.sent[l.g] = true; save(data); d.classList.add('sent'); };
+    d.querySelector('[data-act=copy]').onclick = async () => { if (await copy(l.url)) { toast(`${p.first}'s link copied 📋`); mark(); } else toast('Couldn\'t copy. Long-press the Text button instead.'); };
+    d.querySelector('[data-act=sms]').addEventListener('click', mark);
+    wrap.appendChild(d);
+  });
+}
+function initOrganizer(){
+  heroKids($('#heroKids'));
+  $('#crewList').innerHTML = HOUSES.map(h => {
+    const names = PEOPLE.filter(p => p.house===h.key).map(p => p.first).join(' & ');
+    return `<div class="house"><b>🏡 ${escapeHTML(names)}</b><span>${escapeHTML(h.where)}</span></div>`;
+  }).join('');
+  const existing = load();
+  if (existing && existing.links?.length === PEOPLE.length) renderOrders(existing);
+
+  $('#drawBtn').onclick = () => {
+    const btn = $('#drawBtn'); btn.disabled = true; btn.textContent = '🔨 Hammering out the list…';
+    document.body.classList.add('drawing');
+    setTimeout(() => {
+      const { map } = draw();
+      const data = { at: Date.now(), links: PEOPLE.map(p => ({ g:p.id, url: `${baseURL()}?t=${encode(p.id, map[p.id])}` })), sent:{} };
+      save(data); document.body.classList.remove('drawing');
+      btn.disabled = false; btn.textContent = '🎲 Draw Names';
+      renderOrders(data); fireConfetti(); toast('Nailed it! Work orders issued 🎉');
+    }, 1400);
+  };
+  $('#redrawBtn').onclick = () => {
+    if (!confirm('Start over? This makes a whole new set of links. Only do this if you haven\'t sent any yet.')) return;
+    try { localStorage.removeItem(STORE); } catch {}
+    $('#ordersArea').hidden = true; $('#drawArea').hidden = false; window.scrollTo({ top:0, behavior:'smooth' });
+  };
+  $('#copyAll').onclick = async () => {
+    const d = load(); if (!d) return;
+    const text = d.links.map(l => `${PEOPLE[l.g].first}: ${l.url}`).join('\n');
+    toast(await copy(text) ? 'All 6 links copied 📋' : 'Couldn\'t copy, sorry!');
+  };
+  show('organizer');
+}
+
+/* ============ REVEAL ============ */
+let assignment, timers = [], ideaList = [], ideaIdx = 0;
+const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+function initGate(a){
+  assignment = a;
+  const g = PEOPLE[a.g];
+  heroKids($('#gateKids'));
+  $('#gateName').textContent = g.first.toUpperCase();
+  $('#gateQ').textContent = `Are you ${g.first}?`;
+  $('#gateYes').onclick = () => { show('reveal'); startReveal(); };
+  $('#gateNo').onclick = () => { const m=$('#nopeMsg'); m.style.display='block'; m.textContent = `Hands off the blueprints! 🚧 Please pass the phone back to ${g.first}.`; };
+  show('gate');
+}
+
+function buildStage(){
+  const r = PEOPLE[assignment.r];
+  $('#kidC').innerHTML = kidSVG('c');
+  $('#kidE').innerHTML = kidSVG('e');
+  $('#box').innerHTML = TOOLBOX;
+  ['#t1','#t2','#t3','#t4'].forEach((s,i) => $(s).innerHTML = TOOLS[i]);
+  const name = r.first.toUpperCase();
+  const bn = $('#bpName'); bn.textContent = name + '!';
+  bn.style.fontSize = Math.min(17, 78 / ((name.length + 1) * 0.78)) + 'cqw';
+  $('#bpMeta').textContent = `WORK ORDER № 2026-0${assignment.g+1} · H-I CONSTRUCTION CO.`;
+}
+
+function typeTitle(instant){
+  const el = $('#bpTitle'), text = 'SECRET SANTA ASSIGNMENT';
+  if (instant){ el.textContent = text; return; }
+  let i = 0; el.innerHTML = '<span class="caret"></span>';
+  const step = () => {
+    i++; el.innerHTML = escapeHTML(text.slice(0,i)) + '<span class="caret"></span>';
+    if (i < text.length) timers.push(setTimeout(step, 38)); else timers.push(setTimeout(() => el.textContent = text, 300));
+  };
+  step();
+}
+
+function startReveal(){
+  const stage = $('#stage');
+  buildStage();
+  timers.forEach(clearTimeout); timers = [];
+  stage.classList.remove('play','skip','done');
+  $('#bpTitle').textContent = '';
+  void stage.offsetWidth; // restart animations
+  stage.classList.add('play');
+  if (reduceMotion){ finish(true); return; }
+  timers.push(setTimeout(() => typeTitle(false), 7050));
+  timers.push(setTimeout(() => fireConfetti(true), 9250));
+  timers.push(setTimeout(() => finish(false), 9900));
+  stage.onclick = () => { if (!stage.classList.contains('done')) finish(true, true); };
+}
+
+function finish(skipped, viaTap){
+  const stage = $('#stage');
+  timers.forEach(clearTimeout); timers = [];
+  if (skipped){ stage.classList.add('skip'); typeTitle(true); if (viaTap) fireConfetti(true); }
+  stage.classList.add('done');
+  const r = PEOPLE[assignment.r];
+  $('#srResult').textContent = `Your Secret Santa assignment is ${r.full}.`;
+  showDetails();
+}
+
+function showDetails(){
+  const r = PEOPLE[assignment.r];
+  const d = $('#details');
+  if (!d.classList.contains('on')){
+    d.classList.add('on');
+    $('#detailLead').innerHTML = `You're on the crew for <b>${escapeHTML(r.full)}</b> 🎁 Find them one home tool that makes life a little easier.`;
+    $('#sparkLead').textContent = `Just a few sparks to get the gears turning. You know ${r.first} best!`;
+    ideaList = buildIdeas(r); ideaIdx = 0; renderIdea(false);
+    $('#nextIdea').onclick = () => { ideaIdx = (ideaIdx + 1) % ideaList.length; renderIdea(true); };
+    $('#replayBtn').onclick = () => { window.scrollTo({ top:0, behavior:'smooth' }); setTimeout(startReveal, 250); };
+    setTimeout(() => d.scrollIntoView({ behavior: reduceMotion ? 'auto' : 'smooth', block:'start' }), 900);
+  }
+}
+
+function buildIdeas(r){
+  let pool;
+  if (r.house === 'P') pool = [...PARENTS, ...CITY['Atlanta'].slice(0,1), ...GADGETS.filter(g => g.parents)];
+  else pool = [...NEW_HOME, ...(CITY[r.city] || []), ...GADGETS];
+  return shuffle(pool);
+}
+function renderIdea(anim){
+  const it = ideaList[ideaIdx], el = $('#idea');
+  el.innerHTML = `<div class="em">${it.e}</div><div class="t">${escapeHTML(it.t)}</div><div class="p">${escapeHTML(it.p)}</div><div class="pr">${escapeHTML(it.$)}</div>`;
+  if (anim){ el.classList.remove('swap'); void el.offsetWidth; el.classList.add('swap'); }
+  $('#ideaCount').textContent = `Blueprint ${ideaIdx+1} of ${ideaList.length}`;
+}
+
+/* ============ SCREENS ============ */
+function show(id){ document.querySelectorAll('.screen').forEach(s => s.classList.toggle('on', s.id === id)); }
+
+/* ============ SNOW ============ */
+(function snow(){
+  const c = $('#snow'), x = c.getContext('2d'); let W, H, flakes;
+  const size = () => { const dpr = Math.min(devicePixelRatio||1, 2); W = innerWidth; H = innerHeight; c.width = W*dpr; c.height = H*dpr; x.setTransform(dpr,0,0,dpr,0,0); };
+  size(); addEventListener('resize', size);
+  const N = reduceMotion ? 30 : 70;
+  flakes = Array.from({length:N}, () => ({ x:Math.random()*W, y:Math.random()*H, r:Math.random()*2.2+.6, s:Math.random()*.6+.25, d:Math.random()*Math.PI*2 }));
+  const tick = () => {
+    x.clearRect(0,0,W,H); x.fillStyle = 'rgba(255,255,255,.75)';
+    for (const f of flakes){
+      if (!reduceMotion){ f.y += f.s; f.d += .01; f.x += Math.sin(f.d)*.3; if (f.y > H+5){ f.y = -5; f.x = Math.random()*W; } }
+      x.beginPath(); x.arc(f.x, f.y, f.r, 0, Math.PI*2); x.fill();
+    }
+    if (!reduceMotion) requestAnimationFrame(tick);
+  };
+  tick();
+})();
+
+/* ============ CONFETTI: nails, bolts, snowflakes ============ */
+function fireConfetti(big){
+  if (reduceMotion) return;
+  const c = $('#confetti'), x = c.getContext('2d');
+  const dpr = Math.min(devicePixelRatio||1, 2), W = innerWidth, H = innerHeight;
+  c.width = W*dpr; c.height = H*dpr; x.setTransform(dpr,0,0,dpr,0,0);
+  const colors = ['#FFC72C','#D62828','#2f9e57','#ffffff','#5ad1ff','#9aa4b1'];
+  const kinds = ['nail','bolt','flake','chip'];
+  const parts = Array.from({length: big ? 170 : 110}, () => ({
+    x: W/2 + (Math.random()-.5)*W*.3, y: H*.42, vx:(Math.random()-.5)*14, vy: -Math.random()*14-5,
+    r: Math.random()*Math.PI, vr:(Math.random()-.5)*.35, s: Math.random()*6+6,
+    k: kinds[Math.floor(Math.random()*kinds.length)], col: colors[Math.floor(Math.random()*colors.length)], life: 1
+  }));
+  const t0 = performance.now();
+  const drawP = p => {
+    x.save(); x.translate(p.x,p.y); x.rotate(p.r); x.globalAlpha = Math.max(0, p.life);
+    if (p.k==='nail'){ x.fillStyle='#b8c0cc'; x.fillRect(-1,-p.s,2,p.s*2); x.fillRect(-p.s*.4,-p.s,p.s*.8,2.2); }
+    else if (p.k==='bolt'){ x.fillStyle='#8c96a3'; x.beginPath(); for(let i=0;i<6;i++){ const a=i*Math.PI/3; x.lineTo(Math.cos(a)*p.s*.55, Math.sin(a)*p.s*.55); } x.closePath(); x.fill(); x.fillStyle='#5b6370'; x.beginPath(); x.arc(0,0,p.s*.2,0,7); x.fill(); }
+    else if (p.k==='flake'){ x.strokeStyle='#fff'; x.lineWidth=1.6; for(let i=0;i<3;i++){ x.rotate(Math.PI/3); x.beginPath(); x.moveTo(-p.s*.6,0); x.lineTo(p.s*.6,0); x.stroke(); } }
+    else { x.fillStyle=p.col; x.fillRect(-p.s*.5,-p.s*.3,p.s,p.s*.6); }
+    x.restore();
+  };
+  const tick = now => {
+    const el = (now - t0)/1000; x.clearRect(0,0,W,H);
+    for (const p of parts){ p.vy += .35; p.vx *= .99; p.x += p.vx; p.y += p.vy; p.r += p.vr; if (el > 2.2) p.life -= .03; drawP(p); }
+    if (el < 3.6) requestAnimationFrame(tick); else x.clearRect(0,0,W,H);
+  };
+  requestAnimationFrame(tick);
+}
+
+/* ============ BOOT ============ */
+window.SS = { draw, encode, decode, PEOPLE, okPair, buildIdeas }; // for testing
+const tok = new URLSearchParams(location.search).get('t');
+if (tok === null) initOrganizer();
+else {
+  const a = decode(tok);
+  if (a) initGate(a);
+  else { heroKids($('#badKids')); show('invalid'); }
+}
+})();
+</script>
+</body>
+</html>
